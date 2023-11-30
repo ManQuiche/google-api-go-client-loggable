@@ -18,6 +18,8 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230807174057-1744710a1577
 	google.golang.org/grpc v1.57.0
 	google.golang.org/protobuf v1.31.0
+
+	gitlab.dejamobile.net/rtt-cbp-saas-pci/tracing v1.10.1
 )
 
 require (

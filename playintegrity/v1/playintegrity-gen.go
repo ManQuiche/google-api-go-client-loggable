@@ -55,6 +55,8 @@ import (
 	option "google.golang.org/api/option"
 	internaloption "google.golang.org/api/option/internaloption"
 	htransport "google.golang.org/api/transport/http"
+
+	"gitlab.dejamobile.net/rtt-cbp-saas-pci/tracing"
 )
 
 // Always reference these packages, just in case the auto-generated code
@@ -629,7 +631,8 @@ func (c *V1DecodeIntegrityTokenCall) Header() http.Header {
 	return c.header_
 }
 
-func (c *V1DecodeIntegrityTokenCall) doRequest(alt string) (*http.Response, error) {
+func (c *V1DecodeIntegrityTokenCall) doRequest(ctx context.Context, alt string) (*http.Response, error) {
+	span := tracing.SpanFromContext(ctx)
 	reqHeaders := make(http.Header)
 	reqHeaders.Set("x-goog-api-client", "gl-go/"+gensupport.GoVersion()+" gdcl/"+internal.Version)
 	for k, v := range c.header_ {
@@ -646,6 +649,9 @@ func (c *V1DecodeIntegrityTokenCall) doRequest(alt string) (*http.Response, erro
 	c.urlParams_.Set("prettyPrint", "false")
 	urls := googleapi.ResolveRelative(c.s.BasePath, "v1/{+packageName}:decodeIntegrityToken")
 	urls += "?" + c.urlParams_.Encode()
+
+	span.LogKV("tokencall.request.url", urls)
+
 	req, err := http.NewRequest("POST", urls, body)
 	if err != nil {
 		return nil, err
@@ -664,14 +670,22 @@ func (c *V1DecodeIntegrityTokenCall) doRequest(alt string) (*http.Response, erro
 // response was returned at all) in error.(*googleapi.Error).Header. Use
 // googleapi.IsNotModified to check whether the returned error was
 // because http.StatusNotModified was returned.
-func (c *V1DecodeIntegrityTokenCall) Do(opts ...googleapi.CallOption) (*DecodeIntegrityTokenResponse, error) {
+func (c *V1DecodeIntegrityTokenCall) Do(ctx context.Context, opts ...googleapi.CallOption) (*DecodeIntegrityTokenResponse, error) {
+	span := tracing.SpanFromContext(ctx)
+
+	span.SetOperationName("playintegrity-lib")
+
 	gensupport.SetOptions(c.urlParams_, opts...)
-	res, err := c.doRequest("json")
+	res, err := c.doRequest(ctx, "json")
+
+	span.LogKV("tokencall.request.code", res.StatusCode)
+
 	if res != nil && res.StatusCode == http.StatusNotModified {
 		if res.Body != nil {
 			res.Body.Close()
 		}
 		err = fmt.Errorf("do (line 674): %w", err)
+		tracing.Error(span, err)
 		return nil, gensupport.WrapError(&googleapi.Error{
 			Code:   res.StatusCode,
 			Header: res.Header,
@@ -679,11 +693,13 @@ func (c *V1DecodeIntegrityTokenCall) Do(opts ...googleapi.CallOption) (*DecodeIn
 	}
 	if err != nil {
 		err = fmt.Errorf("do (line 680): %w", err)
+		tracing.Error(span, err)
 		return nil, err
 	}
 	defer googleapi.CloseBody(res)
 	if err := googleapi.CheckResponse(res); err != nil {
 		err = fmt.Errorf("do (line 683): %w", err)
+		tracing.Error(span, err)
 		return nil, gensupport.WrapError(err)
 	}
 	ret := &DecodeIntegrityTokenResponse{
@@ -695,6 +711,7 @@ func (c *V1DecodeIntegrityTokenCall) Do(opts ...googleapi.CallOption) (*DecodeIn
 	target := &ret
 	if err := gensupport.DecodeResponse(target, res); err != nil {
 		err = fmt.Errorf("do (line 693): %w", err)
+		tracing.Error(span, err)
 		return nil, err
 	}
 	return ret, nil
