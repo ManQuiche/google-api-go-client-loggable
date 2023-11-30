@@ -671,16 +671,19 @@ func (c *V1DecodeIntegrityTokenCall) Do(opts ...googleapi.CallOption) (*DecodeIn
 		if res.Body != nil {
 			res.Body.Close()
 		}
+		err = fmt.Errorf("do (line 674): %w", err)
 		return nil, gensupport.WrapError(&googleapi.Error{
 			Code:   res.StatusCode,
 			Header: res.Header,
 		})
 	}
 	if err != nil {
+		err = fmt.Errorf("do (line 680): %w", err)
 		return nil, err
 	}
 	defer googleapi.CloseBody(res)
 	if err := googleapi.CheckResponse(res); err != nil {
+		err = fmt.Errorf("do (line 683): %w", err)
 		return nil, gensupport.WrapError(err)
 	}
 	ret := &DecodeIntegrityTokenResponse{
@@ -691,6 +694,7 @@ func (c *V1DecodeIntegrityTokenCall) Do(opts ...googleapi.CallOption) (*DecodeIn
 	}
 	target := &ret
 	if err := gensupport.DecodeResponse(target, res); err != nil {
+		err = fmt.Errorf("do (line 693): %w", err)
 		return nil, err
 	}
 	return ret, nil
